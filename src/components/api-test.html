@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8" />
+  <title>Gemini API Test</title>
+</head>
+<body>
+  <h2>Gemini API Test</h2>
+  <button onclick="testAPI()">Test API</button>
+
+  <pre id="output"></pre>
+
+  <script>
+    async function testAPI() {
+      const output = document.getElementById("output");
+      output.innerText = "Testing...";
+
+      try {
+        const res = await fetch(
+          "https://generativelanguage.googleapis.com/v1beta/models/gemini-pro:generateContent?key=AIzaSyDi8wKGBa7CbqUErsBooM_Va15QYmChdT0",
+          {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+              contents: [
+                {
+                  parts: [
+                    { text: "Write a short authorization letter for a company tender." }
+                  ]
+                }
+              ]
+            })
+          }
+        );
+
+        const data = await res.json();
+        output.innerText = JSON.stringify(data, null, 2);
+      } catch (err) {
+        output.innerText = "ERROR: " + err.message;
+      }
+    }
+  </script>
+</body>
+</html>

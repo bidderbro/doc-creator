@@ -1,0 +1,72 @@
+@page {
+  size: A4;
+  margin: 20mm;
+}
+
+body {
+  margin: 0;
+  background: #f2f2f2;
+}
+
+/* ===== A4 PAGE ===== */
+.a4-page {
+  width: 210mm;
+  height: 297mm;              /* 🔥 FIXED HEIGHT */
+  margin: 20px auto;
+  background: white;
+  box-shadow: 0 0 10px rgba(0,0,0,0.15);
+  position: relative;
+  overflow: hidden;
+  font-family: Arial, Helvetica, sans-serif;
+}
+
+/* ===== TABLE LAYOUT ===== */
+.doc-table {
+  width: 100%;
+  height: 100%;               /* 🔥 KEY FIX */
+  border-collapse: collapse;
+}
+
+.doc-header img,
+.doc-footer img {
+  width: 100%;
+  display: block;
+}
+
+/* ===== CONTENT ===== */
+.doc-content {
+  padding: 25px 35px;
+  vertical-align: top;
+}
+
+/* ===== WATERMARK ===== */
+.doc-watermark {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  opacity: 0.05;
+  z-index: 1;
+}
+
+.doc-watermark img {
+  width: 420px;
+}
+
+.doc-content,
+.doc-header,
+.doc-footer {
+  position: relative;
+  z-index: 5;
+}
+
+/* ===== PRINT ===== */
+@media print {
+  body {
+    background: white;
+  }
+  .a4-page {
+    box-shadow: none;
+    margin: 0;
+  }
+}

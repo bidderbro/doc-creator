@@ -1,0 +1,109 @@
+import React, { useMemo } from "react";
+import { useParams } from "react-router-dom";
+import templates from "../templates";
+import PRINT_STYLES from "../utils/printStyles";
+import {
+  HEADER_IMAGE,
+  FOOTER_IMAGE,
+  WATERMARK_IMAGE,
+} from "../utils/images";
+import "../styles/document.css";
+
+export default function GenerateDocument() {
+  const { docType } = useParams();
+
+  const decodedType = decodeURIComponent(docType || "");
+
+  const templateKey = useMemo(() => {
+    const keys = Object.keys(templates);
+    return keys.find((k) => decodedType.toLowerCase().includes(k.replace(/_/g, " ")))
+      || keys.find((k) => decodedType.toLowerCase().includes(k));
+  }, [decodedType]);
+
+  const templateFn = templateKey ? templates[templateKey] : null;
+
+  if (!templateFn) {
+    return (
+      <div style={{ padding: 40 }}>
+        <h1>Generate Page</h1>
+        <p style={{ color: "red" }}>Template not found for this document type.</p>
+        <button disabled>Download PDF</button>{" "}
+        <button disabled>Download Word</button>
+      </div>
+    );
+  }
+
+  const documentHtml = templateFn({
+    companyName: "Demo Company",
+    bidNumber: "BID-XXXX-001",
+    date: new Date().toLocaleDateString(),
+  });
+
+  const FINAL_HTML = `
+    <div class="page">
+      <div class="header">
+        <img src="${HEADER_IMAGE}" style="width:100%;height:100%" />
+      </div>
+
+      <img src="${WATERMARK_IMAGE}" class="watermark" />
+
+      <div class="content">
+        ${documentHtml}
+      </div>
+
+      <div class="footer">
+        <img src="${FOOTER_IMAGE}" style="width:100%;height:100%" />
+      </div>
+    </div>
+  `;
+
+  function downloadPDF() {
+    const w = window.open("", "_blank");
+    w.document.write(`
+      <html>
+        <head>
+          <style>${PRINT_STYLES}</style>
+        </head>
+        <body>${FINAL_HTML}</body>
+      </html>
+    `);
+    w.document.close();
+    w.focus();
+    w.print();
+  }
+
+  function downloadWord() {
+    const html = `
+      <html>
+        <head>
+          <meta charset="utf-8"/>
+          <style>${PRINT_STYLES}</style>
+        </head>
+        <body>${FINAL_HTML}</body>
+      </html>
+    `;
+    const blob = new Blob([html], { type: "application/msword" });
+    const link = document.createElement("a");
+    link.href = URL.createObjectURL(blob);
+    link.download = `${templateKey}.doc`;
+    link.click();
+  }
+
+  return (
+    <div style={{ padding: 20 }}>
+      <h1>Generate Page</h1>
+
+      {/* Preview */}
+      <div
+        dangerouslySetInnerHTML={{
+          __html: `<style>${PRINT_STYLES}</style>${FINAL_HTML}`,
+        }}
+      />
+
+      <div style={{ marginTop: 20 }}>
+        <button onClick={downloadPDF}>Download PDF</button>{" "}
+        <button onClick={downloadWord}>Download Word</button>
+      </div>
+    </div>
+  );
+}
