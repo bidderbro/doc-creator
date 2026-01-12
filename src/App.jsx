@@ -5,7 +5,7 @@ import CompanyBranding from "./pages/CompanyBranding";
 
 export default function App() {
   return (
-    <BrowserRouter>
+    <BrowserRouter basename="/doc-creator">
       <Routes>
         <Route path="/" element={<Dashboard />} />
         <Route path="/generate/:docType" element={<GenerateDocument />} />
